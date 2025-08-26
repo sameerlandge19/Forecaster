@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Forecaster</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="preloader" class="preloader is-hidden" aria-hidden="true" aria-live="polite">
+    <div class="preloader-card">
+      <div class="spinner" aria-hidden="true"></div>
+      <div class="preloader-text">Loading forecast…</div>
+    </div>
+  </div>
+  <!-- SVG Icon Sprite (inline for crisp rendering) -->
+  <svg width="0" height="0" style="position:absolute; visibility:hidden;" aria-hidden="true" focusable="false">
+    <defs>
+      <linearGradient id="g-sun" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="#FFD776"/>
+        <stop offset="100%" stop-color="#FF8C3B"/>
+      </linearGradient>
+      <linearGradient id="g-cloud" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#FFFFFF"/>
+        <stop offset="100%" stop-color="#E6ECF8"/>
+      </linearGradient>
+      <linearGradient id="g-rain" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#86B9FF"/>
+        <stop offset="100%" stop-color="#2F80ED"/>
+      </linearGradient>
+      <linearGradient id="g-thunder" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#FFE66D"/>
+        <stop offset="100%" stop-color="#FFB703"/>
+      </linearGradient>
+    </defs>
+
+    <symbol id="i-sun" viewBox="0 0 64 64">
+      <circle cx="32" cy="32" r="12" fill="url(#g-sun)"/>
+      <g stroke="url(#g-sun)" stroke-width="3" stroke-linecap="round">
+        <line x1="32" y1="4" x2="32" y2="14"/>
+        <line x1="32" y1="50" x2="32" y2="60"/>
+        <line x1="4" y1="32" x2="14" y2="32"/>
+        <line x1="50" y1="32" x2="60" y2="32"/>
+        <line x1="11" y1="11" x2="18" y2="18"/>
+        <line x1="46" y1="46" x2="53" y2="53"/>
+        <line x1="11" y1="53" x2="18" y2="46"/>
+        <line x1="46" y1="18" x2="53" y2="11"/>
+      </g>
+    </symbol>
+
+    <symbol id="i-cloud" viewBox="0 0 64 64">
+      <path d="M20 45h26a10 10 0 0 0 1-20 14 14 0 0 0-27-2A11 11 0 0 0 20 45z" fill="url(#g-cloud)"/>
+    </symbol>
+
+    <symbol id="i-partly" viewBox="0 0 64 64">
+      <use href="#i-sun" x="-6" y="-6"/>
+      <use href="#i-cloud"/>
+    </symbol>
+
+    <symbol id="i-rain" viewBox="0 0 64 64">
+      <use href="#i-cloud"/>
+      <g fill="url(#g-rain)">
+        <rect x="22" y="46" width="4" height="10" rx="2"/>
+        <rect x="32" y="48" width="4" height="10" rx="2"/>
+        <rect x="42" y="46" width="4" height="10" rx="2"/>
+      </g>
+    </symbol>
+
+    <symbol id="i-thunder" viewBox="0 0 64 64">
+      <use href="#i-cloud"/>
+      <path d="M30 38h7l-6 10h6l-10 14 3-10h-6l6-14z" fill="url(#g-thunder)"/>
+    </symbol>
+
+    <symbol id="i-snow" viewBox="0 0 64 64">
+      <use href="#i-cloud"/>
+      <g fill="#B3D4FF">
+        <circle cx="24" cy="52" r="2"/>
+        <circle cx="32" cy="54" r="2"/>
+        <circle cx="40" cy="52" r="2"/>
+      </g>
+    </symbol>
+
+    <symbol id="i-mist" viewBox="0 0 64 64">
+      <g stroke="#BCD0EA" stroke-width="4" stroke-linecap="round">
+        <line x1="10" y1="24" x2="54" y2="24"/>
+        <line x1="6" y1="34" x2="50" y2="34"/>
+        <line x1="10" y1="44" x2="54" y2="44"/>
+      </g>
+    </symbol>
+  </svg>
+
+  <div class="app">
+    <header class="header">
+      <div class="brand">
+        <svg width="28" height="28" viewBox="0 0 64 64" aria-hidden="true"><use href="#i-sun"/></svg>
+        <span>Forecaster</span>
+      </div>
+      <form id="searchForm" class="search">
+        <input id="cityInput" type="text" placeholder="Enter city (e.g., Mumbai)" aria-label="City" />
+        <select id="daysSelect" aria-label="Days">
+          <option value="1">1 day</option>
+          <option value="3">3 days</option>
+          <option value="5">5 days</option>
+          <option value="7">7 days</option>
+        </select>
+        <button type="submit" class="btn">Search</button>
+      </form>
+    </header>
+
+    <main class="content">
+      <section id="currentWeather" class="current card" aria-live="polite">
+        <div class="current-left">
+          <div class="icon-wrap" data-animate>
+            <svg width="92" height="92" viewBox="0 0 64 64" aria-hidden="true"><use id="currentIcon" href="#i-partly"/></svg>
+          </div>
+          <div class="temp">
+            <span id="currentTemp" class="value">--</span>
+            <span class="unit">°C</span>
+          </div>
+        </div>
+        <div class="current-right">
+          <h2 id="currentCity">—</h2>
+          <p id="currentMeta" class="muted">—</p>
+          <div class="condition">
+            <span id="currentCondition">—</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="forecast">
+        <h3>Daily forecast</h3>
+        <div id="forecastList" class="forecast-list">
+          <!-- Forecast cards injected here -->
+        </div>
+      </section>
+
+      <div id="status" class="status" role="status" aria-live="polite"></div>
+    </main>
+
+    <footer class="footer">
+      <span>Built with ❤ Sameer Landge</span>
+    </footer>
+  </div>
+
+  <script src="app.js" defer></script>
+</body>
+</html> 
