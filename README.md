@@ -112,10 +112,10 @@ Returns current weather along with daily forecasts.
 The application will start on `http://localhost:9090`
 ---
 ## 📸 Screenshots
-![Day 1 response](Screenshots/day1.png)
+![Day 1 response](Screenshots/day 1.png)
 
-![Day 3 response](Screenshots/day3.png)
+![Day 3 response](Screenshots/day 3.png)
 
-![Day 5 response](Screenshots/day5.png)
+![Day 5 response](Screenshots/day 5.png)
 
-![Day 7 response](Screenshots/day7.png)
+![Day 7 response](Screenshots/day 7.png)
